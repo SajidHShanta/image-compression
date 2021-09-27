@@ -1,0 +1,27 @@
+{
+  "name": "image-compression",
+  "version": "1.0.0",
+  "description": "Image compression project for 'Intra NSU ACM SC Midnight Hackathon'",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SajidHShanta/image-compression.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SajidHShanta/image-compression/issues"
+  },
+  "homepage": "https://github.com/SajidHShanta/image-compression#readme",
+  "dependencies": {
+    "adm-zip": "^0.5.6",
+    "decompress": "^4.2.1",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "multer": "^1.4.3"
+  }
+}
