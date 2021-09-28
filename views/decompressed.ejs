@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>image-compression</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="container" id="compress">
+    <h1 class="text-center">
+      Intra ACM Mid 🌃 Night Hackathon
+    </h1>
+
+    <!-- navbar -->
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Compress</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="/decompress">Decompress</a>
+      </li>
+    </ul> <br>
+
+    <h2 class="text-center">Decompress ZIP File to Images</h2>
+      <div class="decompressed">
+        <!-- <p>a: <%= extractedFiles %></p> -->
+        <% extractedFiles.forEach((file) => { %>
+          <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
+            <div class="d-grid gap-2 col-6 mx-auto">
+              <a href="output/decompressed/<%=file%>" class="btn btn-danger" download><img src="output/decompressed/<%=file%>" height="50px"> Download</a>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <a href="/decompress" class="btn btn-dark">Upload another Zip for Compress</a>
+        </div>
+      </div>
+  </div>
+
+  <!--  for bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+</body>
+
+</html>

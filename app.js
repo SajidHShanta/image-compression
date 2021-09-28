@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require("path")
 const multer = require('multer')
 const admzip = require('adm-zip')
+const decompress = require('decompress')
 
 const app = express();
 
@@ -39,10 +40,15 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+//get decompress page
+app.get('/decompress', (req, res) => {
+  res.render('decompress');
+});
+
 //cpmpress files
 app.post("/compress", compressfilesupload.array("uploadedFile", numberOfFile), (req, res) => {
   var zip = new admzip();
-  var outputPath = "public/output/compressed-" + Date().toString().slice(0, 15) + ".zip";
+  var outputPath = "public/output/compressed/compressed-" + Date.now() + ".zip";
 
   if (req.files) {
     //store uploaded images
@@ -65,6 +71,34 @@ app.post("/compress", compressfilesupload.array("uploadedFile", numberOfFile), (
         fs.unlinkSync(file.path)
       });
     })
+  }
+});
+
+//decpmpress files
+app.post("/decompress", compressfilesupload.array("uploadedFile", numberOfFile), (req, res) => {
+  var zip = new admzip();
+  const extractedFiles = [];
+  var filePath;
+  if (req.files) {
+    req.files.forEach((zipFile) => {
+      //store file
+      zip.addLocalFile(zipFile.path)
+      //decompress
+      decompress(zipFile.path, 'public/output/decompressed').then(files => {
+        files.forEach((file) => {
+          filePath = file.path;
+          extractedFiles.push(filePath);
+        })
+        //render output
+        res.render("decompressed", {
+          'extractedFiles': extractedFiles
+        });
+      });
+    })
+    //delete uploaded zip file
+    req.files.forEach((file) => {
+      fs.unlinkSync(file.path)
+    });
   }
 });
 
