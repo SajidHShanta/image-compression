@@ -5,6 +5,8 @@ const path = require("path")
 const multer = require('multer')
 const admzip = require('adm-zip')
 const decompress = require('decompress')
+const imagesize = require('image-size')
+const sharp = require('sharp')
 
 const app = express();
 
@@ -26,9 +28,9 @@ var storage = multer.diskStorage({
     );
   },
 });
-var maxSize = 10 * 1024 * 1024; //10 mb
+var maxSize = 100 * 1024 * 1024; //100 mb [though we will ask user for <10 mb images, we can process upto this "maxSize" ]
 var numberOfFile = 100; //user can upload max 100 files at a time
-var compressfilesupload = multer({
+var filesUpload = multer({
   storage: storage,
   limits: {
     fileSize: maxSize
@@ -45,8 +47,13 @@ app.get('/decompress', (req, res) => {
   res.render('decompress');
 });
 
+//get resize page
+app.get('/resize', (req, res) => {
+  res.render('resize');
+});
+
 //cpmpress files
-app.post("/compress", compressfilesupload.array("uploadedFile", numberOfFile), (req, res) => {
+app.post("/compress", filesUpload.array("uploadedFile", numberOfFile), (req, res) => {
   var zip = new admzip();
   var outputPath = "public/output/compressed/compressed-" + Date.now() + ".zip";
 
@@ -75,7 +82,7 @@ app.post("/compress", compressfilesupload.array("uploadedFile", numberOfFile), (
 });
 
 //decpmpress files
-app.post("/decompress", compressfilesupload.array("uploadedFile", numberOfFile), (req, res) => {
+app.post("/decompress", filesUpload.array("uploadedFile", numberOfFile), (req, res) => {
   var zip = new admzip();
   const extractedFiles = [];
   var filePath;
@@ -96,6 +103,43 @@ app.post("/decompress", compressfilesupload.array("uploadedFile", numberOfFile),
       });
     })
     //delete uploaded zip file
+    req.files.forEach((file) => {
+      fs.unlinkSync(file.path)
+    });
+  }
+});
+
+//resize files
+app.post("/resize", filesUpload.array("uploadedFile", numberOfFile), (req, res) => {
+  var zip = new admzip();
+  const percentage = Number(req.body.percentage); //from user input
+  const resizedImages = [];
+  if (req.files) {
+    req.files.forEach((file) => {
+      // console.log(file.path)
+      //store uploaded images
+      zip.addLocalFile(file.path)
+      //create resized images
+      let inputFile = file.path;
+      let outputFile = "public/output/resize/" + file.path.slice(14);
+      resizedImages.push(outputFile);
+      let newHeight = Math.floor((imagesize(file.path).height * percentage) / 100);
+      console.log(imagesize(file.path).height + " to " + newHeight);
+      sharp(inputFile).resize({
+          height: newHeight
+        }).toFile(outputFile)
+        .then(function(newFileInfo) {
+          console.log("Success")
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+    });
+    //render output
+    res.render("resized", {
+      'resizedImages': resizedImages
+    });
+    //delete uploaded images
     req.files.forEach((file) => {
       fs.unlinkSync(file.path)
     });
